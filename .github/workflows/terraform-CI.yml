@@ -1,0 +1,104 @@
+
+name: Terraform CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Select environment for Terraform Plan
+        required: true
+        type: choice
+        options:
+          - dev
+          - preprod
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: terraform-ci-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+
+  terraform-validation:
+
+    name: Terraform CI - ${{ inputs.environment }}
+
+    runs-on: ubuntu-latest
+
+    environment: ${{ inputs.environment }}
+
+    env:
+      ARM_USE_OIDC: "true"
+      ARM_USE_AZUREAD: "true"
+
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_ssh_public_key: ${{ vars.SSH_PUBLIC_KEY }}
+
+      TF_IN_AUTOMATION: "true"
+
+    steps:
+
+      # 1. Checkout repository
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      # 2. Install Terraform
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+
+
+      # 3. Authenticate with Azure using OIDC
+
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+
+      # 4. Terraform formatting check
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+
+      # 5. Initialize Terraform remote backend
+
+      - name: Terraform Init
+        run: |
+          terraform init -input=false \
+            -backend-config="resource_group_name=${{ vars.TFSTATE_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=${{ vars.TFSTATE_CONTAINER }}" \
+            -backend-config="key=${{ inputs.environment }}.tfstate"
+
+
+      # 6. Validate Terraform configuration
+
+      - name: Terraform Validate
+        run: terraform validate
+
+
+      # 7. Terraform Plan
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -input=false \
+            -lock-timeout=5m \
+            -no-color \
+            -var-file="tfvars/${{ inputs.environment }}.tfvars"

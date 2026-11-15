@@ -1,0 +1,24 @@
+# Terraform working directory
+.terraform/
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+
+# Terraform plans
+*.tfplan
+tfplan
+
+# Local variable files containing sensitive data
+*.auto.tfvars
+*.tfvars.backup
+
+# Private keys
+*.pem
+*.key
+id_rsa
+id_ed25519
+
+# Crash logs
+crash.log
+crash.*.log

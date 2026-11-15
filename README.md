@@ -1,0 +1,1 @@
+Repo for the demo of resource creation in azure console via TF plus github actions
