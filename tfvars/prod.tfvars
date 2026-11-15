@@ -1,6 +1,6 @@
 
 environment = "prod"
-location    = "eastus2"
+location    = "eastus"
 
 vnet_cidr           = "10.30.0.0/16"
 vm_subnet_cidr      = "10.30.1.0/24"
