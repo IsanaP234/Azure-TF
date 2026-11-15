@@ -8,8 +8,8 @@ bastion_subnet_cidr = "10.20.2.0/26"
 
 vm_count = 1
 
-vm_size = "Standard_D2s_v5"
-
+#vm_size = "Standard_D2s_v5"
+vm_size = "Standard_D2s_v7"
 admin_username = "azureadmin"
 
 os_disk_size_gb = 64
