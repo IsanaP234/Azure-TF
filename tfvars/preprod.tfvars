@@ -1,6 +1,6 @@
 
-environment         = "preprod"
-location = "eastus2"
+environment = "preprod"
+location    = "eastus2"
 
 vnet_cidr           = "10.20.0.0/16"
 vm_subnet_cidr      = "10.20.1.0/24"

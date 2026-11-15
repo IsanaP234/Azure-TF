@@ -6,7 +6,7 @@ variable "subscription_id" {
 variable "environment" {
   description = "Deployment environment"
   type        = string
-  default    = "dev"
+  default     = "dev"
 }
 
 variable "resource_group_name" {
@@ -49,7 +49,7 @@ variable "vm_size" {
 variable "admin_username" {
   description = "Linux administrator username"
   type        = string
-  default = "azureadmin"
+  default     = "azureadmin"
 }
 
 variable "ssh_public_key" {

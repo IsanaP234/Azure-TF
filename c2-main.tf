@@ -2,7 +2,7 @@
 resource "azurerm_resource_group" "rg" {
   name     = "rg-${var.environment}-compute"
   location = var.location
-  tags    = local.common_tags
+  tags     = local.common_tags
 }
 
 #Vnet
@@ -14,7 +14,7 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = azurerm_resource_group.rg.name
 
   address_space = [var.vnet_cidr]
-  tags = local.common_tags
+  tags          = local.common_tags
 }
 
 #VM subnet
@@ -28,7 +28,7 @@ resource "azurerm_subnet" "vm_subnet" {
 }
 
 #bastion subnet
-resource "azurerm_subnet" "bastion_subnet" {  
+resource "azurerm_subnet" "bastion_subnet" {
   name                 = "AzureBastionSubnet" #mandatorily named this
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
@@ -45,20 +45,20 @@ resource "azurerm_network_security_group" "nsg" {
   resource_group_name = azurerm_resource_group.rg.name
 
   security_rule {
-    name                       = "Allow-SSH-From-Bastion"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
+    name      = "Allow-SSH-From-Bastion"
+    priority  = 100
+    direction = "Inbound"
+    access    = "Allow"
+    protocol  = "Tcp"
 
-    source_port_range          = "*"
-    destination_port_range     = "22"
+    source_port_range      = "*"
+    destination_port_range = "22"
 
     source_address_prefix      = var.bastion_subnet_cidr
     destination_address_prefix = "*"
   }
 
-  tags = local.common_tags  
+  tags = local.common_tags
 }
 
 #Associate NSG with the subnet
@@ -125,14 +125,14 @@ resource "azurerm_network_interface" "nic" {
 #Linux VMs
 resource "azurerm_linux_virtual_machine" "vm" {
 
-  count = var.vm_count
-  name = "vm-${var.environment}-${format("%02d", count.index + 1)}"
+  count         = var.vm_count
+  name          = "vm-${var.environment}-${format("%02d", count.index + 1)}"
   computer_name = "vm-${var.environment}-${format("%02d", count.index + 1)}"
 
   resource_group_name = azurerm_resource_group.rg.name
-  location = var.location
-  size = var.vm_size
-  admin_username = var.admin_username
+  location            = var.location
+  size                = var.vm_size
+  admin_username      = var.admin_username
 
   network_interface_ids = [
     azurerm_network_interface.nic[count.index].id
@@ -153,7 +153,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   os_disk {
 
-    name = "osdisk-${var.environment}-${format("%02d", count.index + 1)}"
+    name                 = "osdisk-${var.environment}-${format("%02d", count.index + 1)}"
     caching              = "ReadWrite"
     storage_account_type = var.os_disk_type
     disk_size_gb         = var.os_disk_size_gb
@@ -165,9 +165,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
   source_image_reference {
 
     publisher = "Canonical"
-    offer = "0001-com-ubuntu-server-jammy"
-    sku = "22_04-lts-gen2"
-    version = "latest"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
   }
 
 
