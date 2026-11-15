@@ -9,10 +9,10 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "resource_group_name" {
-  description = "Environment resource group"
-  type        = string
-}
+# variable "resource_group_name" {
+#   description = "Environment resource group"
+#   type        = string
+# }
 
 variable "location" {
   description = "Azure deployment region"
