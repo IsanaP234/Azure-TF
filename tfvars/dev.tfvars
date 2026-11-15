@@ -8,7 +8,7 @@ bastion_subnet_cidr = "10.10.2.0/26"
 
 vm_count = 1
 
-vm_size = "Standard_B2s"
+vm_size = "Standard_B2ms"
 
 admin_username = "azureadmin"
 
